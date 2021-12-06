@@ -27,4 +27,5 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     // Route::post('/product/{id}', [ProductController::class, 'update']);
     Route::resource('/product', ProductController::class);
     Route::post('/image/{id}', [ProductController::class, 'addImage']);
+    Route::delete('/image/{id}', [ProductController::class, 'deleteImage']);
 });

@@ -10,6 +10,7 @@ use App\Models\Product;
 use App\Services\DeleteService;
 use App\Services\PutService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\Response;
 
 class ProductController extends Controller
@@ -19,6 +20,7 @@ class ProductController extends Controller
         $this->postService = $postService;
         $this->putService = $putService;
         $this->deleteService = $deleteService;
+        $this->middleware('is_admin')->except('index', 'show');
     }
     /**
      * Display a listing of the resource.
@@ -124,6 +126,18 @@ class ProductController extends Controller
 
         return response([
             'message' => 'Image successfully added',
+            'status' => Response::HTTP_OK
+        ], Response::HTTP_OK);
+    }
+
+    public function deleteImage($id)
+    {
+        $image = Image::find($id);
+        Storage::delete(substr("posts-image/$image->image_name", 12));
+        Image::destroy($image->id);
+
+        return response([
+            'message' => 'Image successfully deleted',
             'status' => Response::HTTP_OK
         ], Response::HTTP_OK);
     }

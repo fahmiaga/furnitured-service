@@ -36,9 +36,5 @@ class PostService
         $images = $request->file('image_name');
 
         $this->image->addMultipleImage($images, $id);
-        // foreach ($images as $image) {
-        //     $filename = $image->hashName();
-        //     $this->image->storeImage($image, $id, $filename);
-        // }
     }
 }
