@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ProductRequest;
 use App\Http\Resources\ProductResource;
 use App\Models\Image;
 use App\Services\PostService;

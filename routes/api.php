@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProductController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -24,8 +25,12 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
 
 Route::group(['middleware' => ['jwt.verify']], function () {
-    // Route::post('/product/{id}', [ProductController::class, 'update']);
+
+    // product manipulation
     Route::resource('/product', ProductController::class);
     Route::post('/image/{id}', [ProductController::class, 'addImage']);
     Route::delete('/image/{id}', [ProductController::class, 'deleteImage']);
+
+    // cart
+    Route::resource('/cart', CartController::class);
 });

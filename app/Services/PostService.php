@@ -2,16 +2,17 @@
 
 namespace App\Services;
 
+use App\Models\Cart;
 use App\Models\Image;
 use App\Models\Product;
-use Illuminate\Http\Request;
 
 class PostService
 {
 
-    public function __construct(Image $image)
+    public function __construct(Image $image, Cart $cart)
     {
         $this->image = $image;
+        $this->cart = $cart;
     }
 
     public function post($request)
@@ -36,5 +37,10 @@ class PostService
         $images = $request->file('image_name');
 
         $this->image->addMultipleImage($images, $id);
+    }
+
+    public function addToCart($request)
+    {
+        $this->cart->addNewCart($request->product_id);
     }
 }
