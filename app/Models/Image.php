@@ -30,7 +30,7 @@ class Image extends Model
         return  $this->create([
             'product_id' => $id,
             'image_name' => $image->store('post-images'),
-            'url' => "http://furnitured-service.test/post-images/$filename"
+            'url' => "http://127.0.0.1:8000/storage/post-images/$filename"
         ]);
     }
 
