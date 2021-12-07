@@ -25,6 +25,7 @@ class Image extends Model
         }
     }
 
+    // store image
     public function storeImage($image, $id, $filename)
     {
         return  $this->create([
