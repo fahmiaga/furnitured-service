@@ -34,6 +34,7 @@ class Image extends Model
         ]);
     }
 
+    // get image product
     public function getImageProduct($id)
     {
         return $this->where('product_id', $id)->get();
