@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\OrderResource;
 use App\Models\Order;
+use App\Models\OrderItems;
 use App\Services\PostService;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -10,9 +12,10 @@ use Symfony\Component\HttpFoundation\Response;
 class OrderController extends Controller
 {
 
-    public function __construct(PostService $postService)
+    public function __construct(PostService $postService, OrderItems $order)
     {
         $this->postService = $postService;
+        $this->order = $order;
     }
     /**
      * Display a listing of the resource.
@@ -21,7 +24,6 @@ class OrderController extends Controller
      */
     public function index()
     {
-        //
     }
 
     /**
@@ -59,7 +61,13 @@ class OrderController extends Controller
      */
     public function show(Order $order)
     {
-        //
+        $data = new OrderResource($order);
+
+        return response([
+            'data' => $data,
+            'message' => 'success',
+            'status' => Response::HTTP_OK,
+        ]);
     }
 
     /**

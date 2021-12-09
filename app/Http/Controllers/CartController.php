@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\CartResource;
+use App\Http\Resources\ItemResource;
 use App\Models\Cart;
 use App\Services\PostService;
 use Illuminate\Http\Request;
@@ -25,7 +25,7 @@ class CartController extends Controller
     public function index()
     {
         $carts = $this->cart->getCartByUserId();
-        return CartResource::collection($carts);
+        return ItemResource::collection($carts);
     }
 
     /**
