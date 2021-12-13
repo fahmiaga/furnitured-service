@@ -32,7 +32,9 @@ class DatabaseSeeder extends Seeder
         Product::factory(20)->create();
 
         User::create([
-            'name' => 'Hulaevi',
+            'first_name' => 'Rania',
+            'last_name' => 'Hulaevi',
+            'phone' => '085275128585',
             'email' => 'levi@gmail.com',
             'password' => bcrypt('12345')
         ]);

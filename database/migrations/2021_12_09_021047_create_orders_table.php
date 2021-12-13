@@ -15,10 +15,10 @@ class CreateOrdersTable extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->boolean('status')->default(false);
+            $table->string('transaction_id');
+            $table->string('invoice');
+            $table->enum('status', ['WAITING', 'PENDING', 'CANCEL', 'SUCCESS']);
             $table->bigInteger('total_cost');
-            $table->dateTime('start_booking');
-            $table->dateTime('end_booking');
             $table->timestamps();
         });
     }

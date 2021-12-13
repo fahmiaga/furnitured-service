@@ -17,7 +17,7 @@ class ProductFactory extends Factory
             'category_id' => mt_rand(1, 3),
             'name' => $this->faker->word(),
             'price' => $this->faker->numberBetween(100000, 5000000),
-            'qty' => mt_rand(5, 20),
+            'quantity' => mt_rand(5, 20),
             'description' => $this->faker->paragraph(),
         ];
     }

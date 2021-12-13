@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -37,4 +38,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
     // Order
     Route::resource('/order', OrderController::class);
+
+    // payment
+    Route::post('/payment/product', [PaymentController::class, 'buyProduct']);
 });
