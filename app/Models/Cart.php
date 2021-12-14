@@ -32,4 +32,9 @@ class Cart extends Model
     {
         return $this->with(['product'])->where('user_id', auth()->user()->id)->get();
     }
+
+    public function getCart($id)
+    {
+        return $this->where('product_id', $id)->first();
+    }
 }

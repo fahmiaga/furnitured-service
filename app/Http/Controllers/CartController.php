@@ -47,7 +47,14 @@ class CartController extends Controller
     public function store(Request $request)
     {
 
-        $cart = $this->postService->addToCart($request);
+        $cart = $this->cart->getCart($request->product_id);
+        if ($cart) {
+            return response([
+                'message' => 'Product already exist in your cart',
+                'status' => Response::HTTP_BAD_REQUEST
+            ], Response::HTTP_BAD_REQUEST);
+        }
+        $this->postService->addToCart($request);
 
         return response([
             'message' => 'Product added to cart',
