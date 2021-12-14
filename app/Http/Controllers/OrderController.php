@@ -6,15 +6,18 @@ use App\Http\Resources\OrderResource;
 use App\Models\Order;
 use App\Models\OrderItems;
 use App\Services\PostService;
+use App\Services\PutService;
 use Illuminate\Http\Request;
+
 use Symfony\Component\HttpFoundation\Response;
 
 class OrderController extends Controller
 {
 
-    public function __construct(PostService $postService, OrderItems $order)
+    public function __construct(PostService $postService, OrderItems $order, PutService $putService)
     {
         $this->postService = $postService;
+        $this->putService = $putService;
         $this->order = $order;
     }
     /**
@@ -45,7 +48,7 @@ class OrderController extends Controller
     public function store(Request $request)
     {
 
-        $this->postService->addOrder();
+        $this->postService->addOrder($request->recipient_id);
 
         return response([
             'message' => 'Product successfully ordered',
@@ -102,5 +105,15 @@ class OrderController extends Controller
     public function destroy(Order $order)
     {
         //
+    }
+
+    public function checkOrder(Request $request)
+    {
+        $this->putService->updateCart($request);
+
+        return response([
+            'message' => 'success',
+            'status' => Response::HTTP_OK,
+        ]);
     }
 }

@@ -15,11 +15,10 @@ class CreateInvoicesTable extends Migration
     {
         Schema::create('invoices', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('cart_id');
-            $table->foreignId('product_id');
-            $table->foreignId('user_id');
-            $table->text('address');
-            $table->string('status');
+            $table->string('transaction_id');
+            $table->string('invoice');
+            $table->enum('status', ['WAITING', 'PENDING', 'CANCEL', 'SUCCESS']);
+            $table->bigInteger('total_cost');
             $table->timestamps();
         });
     }

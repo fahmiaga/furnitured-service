@@ -20,7 +20,7 @@ class ItemResource extends JsonResource
         return [
             'cart_id' => $this->id,
             'name' => $this->product->name,
-            'qty' => $this->product->qty,
+            'quantity' => $this->quantity,
             'price' => $this->product->price,
             'description' => $this->product->description,
             'images' => ImageResource::collection($images->images),

@@ -15,10 +15,10 @@ class CreateOrdersTable extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->string('transaction_id');
-            $table->string('invoice');
-            $table->enum('status', ['WAITING', 'PENDING', 'CANCEL', 'SUCCESS']);
-            $table->bigInteger('total_cost');
+            $table->foreignId('product_id');
+            $table->foreignId('user_id');
+            $table->foreignId('recipient_id');
+            $table->bigInteger('quantity');
             $table->timestamps();
         });
     }

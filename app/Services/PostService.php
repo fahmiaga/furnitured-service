@@ -48,9 +48,9 @@ class PostService
         $this->cart->addNewCart($request->product_id);
     }
 
-    public function AddOrder()
+    public function AddOrder($recipient_id)
     {
-        $this->order->addNewOrder();
+        $this->order->addNewOrder($recipient_id);
     }
 
     // public function buyProduct($request)

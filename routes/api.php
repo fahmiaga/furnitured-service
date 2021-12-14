@@ -38,6 +38,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
     // Order
     Route::resource('/order', OrderController::class);
+    Route::post('/order/checkorder', [OrderController::class, 'checkOrder']);
 
     // payment
     Route::post('/payment/product', [PaymentController::class, 'buyProduct']);

@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Cart extends Model
 {
     use HasFactory;
-    protected $fillable = ['product_id', 'user_id'];
+    protected $fillable = ['product_id', 'user_id', 'quantity'];
 
     public function product()
     {
@@ -24,7 +24,8 @@ class Cart extends Model
     {
         $this->create([
             'product_id' => $cart,
-            'user_id' => auth()->user()->id
+            'user_id' => auth()->user()->id,
+            'quantity' => 1
         ]);
     }
 
@@ -35,6 +36,6 @@ class Cart extends Model
 
     public function getCart($id)
     {
-        return $this->where('product_id', $id)->first();
+        return $this->where('product_id', $id)->where('user_id', auth()->user()->id)->first();
     }
 }

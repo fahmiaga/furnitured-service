@@ -2,48 +2,23 @@
 
 namespace App\Models;
 
-use DateTime;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
     use HasFactory;
-    protected $fillable = ['status', 'total_cost', 'start_booking', 'end_booking'];
+    protected $fillable = ['quantity', 'product_id', 'user_id', 'recipient_id'];
 
-
-    public function order_items()
-    {
-        return $this->hasMany(OrderItems::class);
-    }
-
-    public function addNewOrder()
-    {
-        $order =   $this->addOrder();
-        $this->addOrderItem($order->id);
-    }
-
-    public function addOrder()
-    {
-        $end_booking = new DateTime('tomorrow');
-
-        $total_cost = $this->getOrders()->sum('price');
-
-        return $this->create([
-            'total_cost' => $total_cost,
-            'start_booking' => date("Y-m-d h:i:s"),
-            'end_booking' => $end_booking->format("Y-m-d h:i:s"),
-        ]);
-    }
-
-    public function addOrderItem($order_id)
+    public function addNewOrder($recipient_id)
     {
         $orders = $this->getOrders();
         foreach ($orders as $order) {
-            OrderItems::create([
-                'order_id' => $order_id,
+            $this->create([
                 'product_id' => $order->product_id,
                 'user_id' => auth()->user()->id,
+                'recipient_id' => $recipient_id,
+                'quantity' => $order->quantity
             ]);
         }
     }
