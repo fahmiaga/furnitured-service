@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Midtrans\CoreApi;
 use App\Http\Resources\PaymentResource;
 use App\Models\Cart;
+use App\Models\Invoice;
 use App\Models\Order;
 
 class PaymentController extends Controller
@@ -25,7 +26,8 @@ class PaymentController extends Controller
             $result = null;
             $payment_method = $request->payment_method;
             $order_id = 'CXS' . date('YmdHis');
-            $total_mount = $this->order->getOrders()->sum('price');
+            // return PaymentResource::collection($this->cart->getCartByUserId());
+            $total_mount = $this->order->totalCost();
             $transaction = [
                 "transaction_details" => [
                     "gross_amount" => $total_mount,
@@ -73,10 +75,11 @@ class PaymentController extends Controller
                 return ['code' => 0, 'message' => 'Terjadi kesalahan 02'];
             }
 
-            $order = new Order();
+
+            $order = new Invoice();
             $order->invoice = $order_id;
             $order->transaction_id = $charge->transaction_id;
-            $order->total_cost = $order->getOrders()->sum('price');
+            $order->total_cost = $total_mount;
             $order->status = "PENDING";
 
             if (!$order->save())

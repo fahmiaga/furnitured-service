@@ -30,4 +30,15 @@ class Order extends Model
             ->where('carts.user_id', auth()->user()->id)
             ->get();
     }
+
+    public function totalCost()
+    {
+        $orders = $this->getOrders();
+        $total = 0;
+        foreach ($orders as $order) {
+            $total += $order->price * $order->quantity;
+        }
+
+        return $total;
+    }
 }
