@@ -50,4 +50,9 @@ class PutService
             $this->cart->where('id', $req['cart_id'])->update(['quantity' => $req['quantity']]);
         }
     }
+
+    public function putRecipient($request, $recipient)
+    {
+        $recipient->update($request->all());
+    }
 }

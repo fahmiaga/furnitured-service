@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Image;
 use App\Models\Product;
+use App\Models\Recipient;
 use Illuminate\Support\Facades\Storage;
 
 class DeleteService
@@ -27,5 +28,10 @@ class DeleteService
             Storage::delete(substr("posts-image/$image->image_name", 12));
             Image::destroy($image->id);
         }
+    }
+
+    public function deleteRecipient($recipient)
+    {
+        Recipient::destroy($recipient->id);
     }
 }

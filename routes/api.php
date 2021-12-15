@@ -6,6 +6,7 @@ use App\Http\Controllers\MidtransNotifController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\RecipientController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -46,4 +47,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
     // notif midtrans
     Route::post('/notif/submit', [MidtransNotifController::class, 'postNotif']);
+
+    // Recipient
+    Route::resource('/recipient', RecipientController::class);
 });
