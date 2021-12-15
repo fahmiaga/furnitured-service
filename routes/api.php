@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\MidtransNotifController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
@@ -42,4 +43,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
     // payment
     Route::post('/payment/product', [PaymentController::class, 'buyProduct']);
+
+    // notif midtrans
+    Route::post('/notif/submit', [MidtransNotifController::class, 'postNotif']);
 });
