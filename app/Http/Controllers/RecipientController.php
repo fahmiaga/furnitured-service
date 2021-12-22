@@ -26,9 +26,9 @@ class RecipientController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Recipient $recipient)
+    public function index()
     {
-        $data = $recipient->getRecipient();
+        $data = $this->recipient->getRecipient();
         return  RecipientResource::collection($data);
     }
 
