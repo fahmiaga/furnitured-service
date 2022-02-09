@@ -55,4 +55,9 @@ class PutService
     {
         $recipient->update($request->all());
     }
+
+    public function updateCategory($request, $category)
+    {
+        $category->update($request->all());
+    }
 }

@@ -3,11 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\RecipientResource;
+use App\Models\Cart;
+use App\Models\City;
+use App\Models\Province;
 use App\Services\PostService;
 use App\Services\DeleteService;
 use App\Services\PutService;
 use App\Models\Recipient;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Symfony\Component\HttpFoundation\Response;
 
 class RecipientController extends Controller
@@ -68,6 +72,12 @@ class RecipientController extends Controller
      */
     public function show(Recipient $recipient)
     {
+
+        return response([
+            'data' => $recipient,
+            'message' => 'success',
+            'status' => Response::HTTP_OK
+        ], Response::HTTP_OK);
     }
 
     /**
@@ -111,9 +121,95 @@ class RecipientController extends Controller
         $this->deleteService->deleteRecipient($recipient);
 
         return response([
-
             'message' => 'Data successfully deleted',
             'status' => Response::HTTP_OK
         ], Response::HTTP_OK);
+    }
+
+    public function getProvince()
+    {
+        $provinces = Province::all();
+        return response([
+            'data' => $provinces,
+            'message' => 'success',
+            'status' => Response::HTTP_OK
+        ], Response::HTTP_OK);
+    }
+
+    public function getCity($id)
+    {
+        $cities = City::where('province_id', $id)->get();
+        return response([
+            'data' => $cities,
+            'message' => 'success',
+            'status' => Response::HTTP_OK
+        ], Response::HTTP_OK);
+    }
+
+    public function checkShipping(Request $request)
+    {
+        // $input = $request->all();
+        $recipient = Recipient::find($request->recipient_id)->first();
+        $cart = Cart::find($request->cart_id);
+
+        $origin = 457;
+        $weight =  $cart->product()->first()->weight;
+        $destination = $recipient->city_id;
+        $courier = $request->courier;
+
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => "https://api.rajaongkir.com/starter/cost",
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => "",
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => "POST",
+            CURLOPT_POSTFIELDS => "origin=$origin&destination=$destination&weight=$weight&courier=$courier",
+            CURLOPT_HTTPHEADER => array(
+                "content-type: application/x-www-form-urlencoded",
+                "key: 4c6b08a7598998c44df1416b9f844953"
+            ),
+        ));
+
+        $response = curl_exec($curl);
+        $err = curl_error($curl);
+
+        curl_close($curl);
+
+        if ($err) {
+            echo "cURL Error #:" . $err;
+        } else {
+            $response = json_decode($response, true);
+            $data_ongkir = $response['rajaongkir']['results'];
+            Cache::put('shipping', json_encode($data_ongkir));
+            return response($data_ongkir);
+            // return json_decode($response);
+        }
+    }
+
+    public function checkCost(Request $request)
+    {
+        $shipping_cost =  json_decode(Cache::get('shipping'), true);
+        $shipping_option = $shipping_cost[0]['costs'];
+
+        $cost = null;
+
+        foreach ($shipping_option as $sh) {
+            if ($request->service == $sh['service']) {
+                $cost = $sh['cost'][0]['value'];
+            };
+        }
+
+        $cart = Cart::find($request->cart_id);
+
+        $cart->update(['shipping_cost' => $cost]);
+
+        return response([
+            'message' => 'success',
+            'status' => Response::HTTP_OK,
+        ]);
     }
 }

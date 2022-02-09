@@ -45,6 +45,6 @@ class Recipient extends Model
         return $this->join('provinces', 'provinces.id', '=', 'recipients.province_id')
             ->join('cities', 'cities.id', '=', 'recipients.city_id')
             ->where('user_id', auth()->user()->id)
-            ->get();
+            ->get(['recipients.*', 'provinces.name', 'cities.name']);
     }
 }

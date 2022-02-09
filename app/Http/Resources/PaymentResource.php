@@ -19,6 +19,7 @@ class PaymentResource extends JsonResource
             'price' => $this->product->price,
             'quantity' => $this->quantity,
             'name' => $this->product->name,
+            'shipping_cost' => $this->shipping_cost,
         ];
     }
 }

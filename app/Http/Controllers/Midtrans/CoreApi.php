@@ -16,8 +16,11 @@ class CoreApi extends Controller
         if (array_key_exists('item_details', $params)) {
             $gross_amount = 0;
             foreach ($params['item_details'] as $item) {
-                $gross_amount += $item['quantity'] * $item['price'];
+                // $item['price'] = $item->product->price;
+                // dd((int)$item['shipping_cost']);
+                $gross_amount += ($item['quantity'] * $item['price']) + (int)$item['shipping_cost'];
             }
+
             $payloads['transaction_details']['gross_amount'] = $gross_amount;
         }
 
@@ -32,7 +35,6 @@ class CoreApi extends Controller
             Config::$serverKey,
             $payloads
         );
-
         return $result;
     }
 

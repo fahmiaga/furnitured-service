@@ -4,10 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Http\Requests\StoreCategoryRequest;
-use App\Http\Requests\UpdateCategoryRequest;
+// use App\Http\Requests\UpdateCategoryRequest;
+use App\Services\PostService;
+use App\Services\PutService;
+use Illuminate\Http\Response;
 
 class CategoryController extends Controller
 {
+    public function __construct(PostService $postService, PutService $putService)
+    {
+        $this->postService = $postService;
+        $this->putService = $putService;
+    }
     /**
      * Display a listing of the resource.
      *
@@ -15,7 +23,13 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        //
+        $categories = Category::all();
+
+        return response([
+            'data' => $categories,
+            'message' => 'success',
+            'status' => Response::HTTP_OK
+        ]);
     }
 
     /**
@@ -25,7 +39,7 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        //
+        //    
     }
 
     /**
@@ -36,7 +50,13 @@ class CategoryController extends Controller
      */
     public function store(StoreCategoryRequest $request)
     {
-        //
+        $category = $this->postService->addcategory($request);
+
+        return response([
+            'data' => $category,
+            'message' => 'Data successfully created',
+            'status' => Response::HTTP_CREATED
+        ]);
     }
 
     /**
@@ -68,9 +88,14 @@ class CategoryController extends Controller
      * @param  \App\Models\Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateCategoryRequest $request, Category $category)
+    public function update(StoreCategoryRequest $request, Category $category)
     {
-        //
+
+        $this->putService->updateCategory($request, $category);
+        return response([
+            'message' => 'Data successfully updated',
+            'status' => Response::HTTP_OK
+        ]);
     }
 
     /**
@@ -81,6 +106,11 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
-        //
+        $category->destroy($category->id);
+
+        return response([
+            'message' => 'Data successfully deleted',
+            'status' => Response::HTTP_OK
+        ]);
     }
 }

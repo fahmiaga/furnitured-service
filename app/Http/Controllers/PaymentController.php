@@ -26,8 +26,10 @@ class PaymentController extends Controller
             $result = null;
             $payment_method = $request->payment_method;
             $order_id = 'CXS' . date('YmdHis');
-            // return PaymentResource::collection($this->cart->getCartByUserId());
             $total_mount = $this->order->totalCost();
+
+            // return PaymentResource::collection($this->cart->getCartByUserId());
+
             $transaction = [
                 "transaction_details" => [
                     "gross_amount" => $total_mount,
@@ -39,7 +41,8 @@ class PaymentController extends Controller
                     "last_name" => auth()->user()->last_name,
                     "phone" => auth()->user()->phone
                 ],
-                "item_details" => PaymentResource::collection($this->cart->getCartByUserId())
+                // "item_details" => PaymentResource::collection($this->cart->getCartByUserId())
+
             ];
             switch ($payment_method) {
                 case 'bank_transfer':
@@ -64,6 +67,7 @@ class PaymentController extends Controller
     {
         try {
             $transaction = $transaction_object;
+            // dd($transaction);
             $transaction['payment_type'] = 'bank_transfer';
             $transaction['bank_transfer'] = [
                 "bank" => "bca",
@@ -90,22 +94,4 @@ class PaymentController extends Controller
             return ['code' => 0, 'message' => 'Terjadi kesalahan 03'];
         }
     }
-
-    // public function itemFormatter()
-    // {
-    //     $items = $this->order->getOrders();
-    //     $newItem = [];
-    //     foreach ($items as $item) {
-
-    //         $newArray = [
-    //             "id" => (string) $item->id,
-    //             "price" => (int) $item->price,
-    //             "quantity" => 1,
-    //             "name" => $item->name
-    //         ];
-    //         array_push($newItem, (array)$newArray);
-    //     }
-
-    //     return (array)$newItem;
-    // }
 }

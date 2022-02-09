@@ -3,10 +3,13 @@
 namespace App\Services;
 
 use App\Models\Cart;
+use App\Models\Category;
 use App\Models\Image;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Recipient;
+
+use function GuzzleHttp\Promise\all;
 
 // use App\Http\Controllers\Midtrans\CoreApi;
 
@@ -14,12 +17,13 @@ use App\Models\Recipient;
 class PostService
 {
 
-    public function __construct(Image $image, Cart $cart, Order $order, Recipient $recipient)
+    public function __construct(Image $image, Cart $cart, Order $order, Recipient $recipient, Category $category)
     {
         $this->image = $image;
         $this->cart = $cart;
         $this->order = $order;
         $this->recipient = $recipient;
+        $this->category = $category;
     }
 
     public function post($request)
@@ -48,7 +52,7 @@ class PostService
 
     public function addToCart($request)
     {
-        $this->cart->addNewCart($request->product_id);
+        $this->cart->addNewCart($request);
     }
 
     public function AddOrder($recipient_id)
@@ -59,5 +63,10 @@ class PostService
     public function postRecipient($data)
     {
         $this->recipient->addRecipient($data);
+    }
+
+    public function addCategory($request)
+    {
+        return  $this->category->create($request->all());
     }
 }

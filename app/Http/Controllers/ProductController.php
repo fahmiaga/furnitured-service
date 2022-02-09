@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ProductRequest;
 use App\Http\Resources\ProductResource;
+use App\Models\Category;
 use App\Models\Image;
 use App\Services\PostService;
 use App\Models\Product;
@@ -19,7 +21,7 @@ class ProductController extends Controller
         $this->postService = $postService;
         $this->putService = $putService;
         $this->deleteService = $deleteService;
-        $this->middleware('is_admin')->except('index', 'show');
+        $this->middleware('is_admin')->except('index', 'show', 'showProductByCategory');
     }
     /**
      * Display a listing of the resource.
@@ -29,7 +31,7 @@ class ProductController extends Controller
     public function index()
     {
         return response([
-            'data' => Product::all(),
+            'data' => ProductResource::collection(Product::all()),
             'message' => 'success',
             'status' => Response::HTTP_OK
         ], Response::HTTP_OK);
@@ -51,7 +53,7 @@ class ProductController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(ProductRequest $request)
     {
         $product = $this->postService->post($request);
 
@@ -68,9 +70,15 @@ class ProductController extends Controller
      * @param  \App\Models\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function show(Product $product)
+    public function show($id)
     {
-        return new ProductResource($product);
+        $product = Product::where('id', $id)->first();
+
+        return response([
+            'data' => new ProductResource($product),
+            'message' => 'Success',
+            'status' => Response::HTTP_OK
+        ], Response::HTTP_OK);
     }
 
     /**
@@ -137,6 +145,18 @@ class ProductController extends Controller
 
         return response([
             'message' => 'Image successfully deleted',
+            'status' => Response::HTTP_OK
+        ], Response::HTTP_OK);
+    }
+
+    public function showProductByCategory($category_id)
+    {
+        $products = Category::find($category_id)->products;
+        // dd($products);
+
+        return response([
+            'data' => ProductResource::collection($products),
+            'message' => 'success',
             'status' => Response::HTTP_OK
         ], Response::HTTP_OK);
     }

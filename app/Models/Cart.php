@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Cart extends Model
 {
     use HasFactory;
-    protected $fillable = ['product_id', 'user_id', 'quantity'];
+    protected $fillable = ['product_id', 'user_id', 'quantity', 'shipping_cost'];
 
     public function product()
     {
@@ -20,12 +20,12 @@ class Cart extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function addNewCart($cart)
+    public function addNewCart($request)
     {
         $this->create([
-            'product_id' => $cart,
+            'product_id' => $request->product_id,
             'user_id' => auth()->user()->id,
-            'quantity' => 1
+            'quantity' => $request->quantity,
         ]);
     }
 

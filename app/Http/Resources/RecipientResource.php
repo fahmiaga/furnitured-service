@@ -15,12 +15,14 @@ class RecipientResource extends JsonResource
     public function toArray($request)
     {
         return [
+            'id' => $this->id,
             'name' => $this->recipient,
             'address' => $this->address,
             'phone' => $this->phone,
             'province' => $this->province->name,
             'city' => $this->city->name,
-            // 'sub_district' => $this->sub_district,
+            'district' => $this->district,
+            'sub_district' => $this->sub_district,
             'zip_code' => $this->zip_code,
         ];
     }

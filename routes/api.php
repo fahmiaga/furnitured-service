@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\MidtransNotifController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
@@ -28,10 +29,23 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
 
+// product
+Route::get('/product', [ProductController::class, 'index']);
+Route::get('/product/{id}', [ProductController::class, 'show']);
+Route::get('product/category/{id}', [ProductController::class, 'showProductByCategory']);
+
+// category
+Route::get('/category', [CategoryController::class, 'index']);
+
+
 Route::group(['middleware' => ['jwt.verify']], function () {
 
+
+    // get User
+    Route::get('/user', [AuthController::class, 'show']);
+
     // product manipulation
-    Route::resource('/product', ProductController::class);
+    Route::resource('/product', ProductController::class)->except('index', 'show');
     Route::post('/image/{id}', [ProductController::class, 'addImage']);
     Route::delete('/image/{id}', [ProductController::class, 'deleteImage']);
 
@@ -42,6 +56,9 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::resource('/order', OrderController::class);
     Route::post('/order/checkorder', [OrderController::class, 'checkOrder']);
 
+    // category
+    Route::resource('/category', CategoryController::class)->except(['index', 'showProductByCategory']);
+
     // payment
     Route::post('/payment/product', [PaymentController::class, 'buyProduct']);
 
@@ -50,4 +67,8 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
     // Recipient
     Route::resource('/recipient', RecipientController::class);
+    Route::post('/recipient/shipping', [RecipientController::class, 'checkShipping']);
+    Route::post('/recipient/check-cost', [RecipientController::class, 'checkCost']);
+    Route::get('/province', [RecipientController::class, 'getProvince']);
+    Route::get('/city/{id}', [RecipientController::class, 'getCity']);
 });

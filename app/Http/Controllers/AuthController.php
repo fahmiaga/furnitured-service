@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use JWTAuth;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,23 +20,26 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         //Validate data
-        $data = $request->only('name', 'email', 'password');
+        $data = $request->only('first_name', 'last_name', 'phone', 'email', 'password');
+        // dd($data);
         $validator = Validator::make($data, [
             'first_name' => 'required|string',
             'last_name' => 'required|string',
-            'phone' => 'required|min:10|max:12',
+            'phone' => 'required|numeric',
             'email' => 'required|email|unique:users',
             'password' => 'required|string|min:5|max:50'
         ]);
 
         //Send failed response if request is not valid
         if ($validator->fails()) {
-            return response()->json(['error' => $validator->messages()], 200);
+            return response()->json(['error' => $validator->messages()], 422);
         }
 
         //Request is valid, create new user
         $user = User::create([
-            'name' => $request->name,
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
+            'phone' => $request->phone,
             'email' => $request->email,
             'password' => bcrypt($request->password)
         ]);
@@ -75,13 +79,13 @@ class AuthController extends Controller
 
         //Send failed response if request is not valid
         if ($validator->fails()) {
-            return response()->json(['error' => $validator->messages()], 200);
+            return response()->json(['error' => $validator->messages()], 422);
         }
 
         //Request is validated
         //Create token
         try {
-            if (!$token = JWTAuth::attempt($credentials)) {
+            if (!$token = JWTAuth::attempt($credentials, ['exp' => Carbon::now()->addDays(7)->timestamp])) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Login credentials are invalid.',
@@ -94,11 +98,12 @@ class AuthController extends Controller
                 'message' => 'Could not create token.',
             ], 500);
         }
-
+        $user = User::where('id', auth()->user()->id)->first();
         //Token created, return with success response and jwt token
         return response()->json([
             'success' => true,
             'token' => $token,
+            'user' => $user
         ], Response::HTTP_ACCEPTED);
     }
 
@@ -110,7 +115,10 @@ class AuthController extends Controller
      */
     public function show(User $user)
     {
-        //
+        return response()->json([
+            'success' => true,
+            'data' => $user->where('id', auth()->user()->id)->first()
+        ], Response::HTTP_OK);
     }
 
     /**

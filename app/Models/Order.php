@@ -34,11 +34,11 @@ class Order extends Model
     public function totalCost()
     {
         $orders = $this->getOrders();
+
         $total = 0;
         foreach ($orders as $order) {
-            $total += $order->price * $order->quantity;
+            $total += ($order->price * $order->quantity) + $order->shipping_cost;
         }
-
         return $total;
     }
 }
