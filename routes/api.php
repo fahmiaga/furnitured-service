@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\MidtransNotifController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
@@ -41,11 +42,13 @@ Route::get('/category', [CategoryController::class, 'index']);
 Route::group(['middleware' => ['jwt.verify']], function () {
 
 
-    // get User
+    //  User
     Route::get('/user', [AuthController::class, 'show']);
+    Route::post('/user', [AuthController::class, 'update']);
 
     // product manipulation
-    Route::resource('/product', ProductController::class)->except('index', 'show');
+    Route::resource('/product', ProductController::class)->except('index', 'show',);
+    Route::get('/product-filter', [ProductController::class, 'filterProduct']);
     Route::post('/image/{id}', [ProductController::class, 'addImage']);
     Route::delete('/image/{id}', [ProductController::class, 'deleteImage']);
 
@@ -71,4 +74,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::post('/recipient/check-cost', [RecipientController::class, 'checkCost']);
     Route::get('/province', [RecipientController::class, 'getProvince']);
     Route::get('/city/{id}', [RecipientController::class, 'getCity']);
+
+    // invoice
+    Route::resource('/invoice', InvoiceController::class);
 });

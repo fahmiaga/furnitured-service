@@ -9,4 +9,9 @@ class Invoice extends Model
 {
     use HasFactory;
     // ['status', 'total_cost', 'start_booking', 'end_booking']
+
+    public function carts()
+    {
+        return $this->hasMany(Cart::class);
+    }
 }

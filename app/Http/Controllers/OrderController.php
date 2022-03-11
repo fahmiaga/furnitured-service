@@ -2,23 +2,27 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\InvoiceResource;
 use App\Http\Resources\OrderResource;
+use App\Models\Cart;
+use App\Models\Invoice;
 use App\Models\Order;
 use App\Models\OrderItems;
+use App\Models\User;
 use App\Services\PostService;
 use App\Services\PutService;
 use Illuminate\Http\Request;
-
 use Symfony\Component\HttpFoundation\Response;
 
 class OrderController extends Controller
 {
 
-    public function __construct(PostService $postService, OrderItems $order, PutService $putService)
+    public function __construct(PostService $postService, OrderItems $order, PutService $putService, Cart $cart)
     {
         $this->postService = $postService;
         $this->putService = $putService;
         $this->order = $order;
+        $this->cart = $cart;
     }
     /**
      * Display a listing of the resource.
@@ -27,6 +31,12 @@ class OrderController extends Controller
      */
     public function index()
     {
+        $order =  Invoice::all();
+        return response([
+            'data' => $order,
+            'message' => 'success',
+            'status' => Response::HTTP_OK,
+        ]);
     }
 
     /**
@@ -62,9 +72,21 @@ class OrderController extends Controller
      * @param  \App\Models\Order  $order
      * @return \Illuminate\Http\Response
      */
-    public function show(Order $order)
+    public function show($id)
     {
-        $data = new OrderResource($order);
+
+        $cart = Cart::onlyTrashed()->where('transaction_id', $id)->first();
+
+        $user = User::find($cart->user_id);
+
+        $item = Cart::onlyTrashed()->where('transaction_id', $id)->get();
+        // dd($item);
+        return InvoiceResource::collection($item);
+
+        $data = [
+            'user' => $user,
+            'cart' => Cart::onlyTrashed()->where('transaction_id', $id)->get(),
+        ];
 
         return response([
             'data' => $data,

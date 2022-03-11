@@ -6,6 +6,8 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
@@ -58,5 +60,36 @@ class User extends Authenticatable implements JWTSubject
     public function recipients()
     {
         return $this->hasMany(Recipient::class);
+    }
+
+    public function updateUser($request)
+    {
+
+        $user = $this->where('id', auth()->user()->id)->first();
+
+        if ($user->picture !== null) {
+            $oldFile = substr($user->picture, 18);
+            unlink(public_path('/storage/img-user/' . $oldFile));
+        }
+
+        $image = $request->file('picture');
+        $filename = '';
+
+        if ($image !== null) {
+            $filename = $image->hashName();
+            $image->store('img-user');
+            $this->where('id', auth()->user()->id)->update([
+                'first_name' => $request->first_name,
+                'last_name' => $request->last_name,
+                'phone' => $request->phone,
+                'picture' => "/storage/img-user/$filename"
+            ]);
+        } else {
+            $this->where('id', auth()->user()->id)->update([
+                'first_name' => $request->first_name,
+                'last_name' => $request->last_name,
+                'phone' => $request->phone,
+            ]);
+        }
     }
 }

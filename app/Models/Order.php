@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use SebastianBergmann\CodeCoverage\Report\Xml\Totals;
 
 class Order extends Model
 {
@@ -25,7 +26,7 @@ class Order extends Model
 
     public function getOrders()
     {
-        return Product::join('carts', 'products.id', '=', 'carts.product_id')
+        return Cart::join('products', 'carts.product_id', '=', 'products.id')
             ->select('*')
             ->where('carts.user_id', auth()->user()->id)
             ->get();
@@ -34,7 +35,6 @@ class Order extends Model
     public function totalCost()
     {
         $orders = $this->getOrders();
-
         $total = 0;
         foreach ($orders as $order) {
             $total += ($order->price * $order->quantity) + $order->shipping_cost;

@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+
 use App\Models\Invoice;
+
 use Illuminate\Http\Request;
 
 class MidtransNotifController extends Controller
@@ -33,6 +35,7 @@ class MidtransNotifController extends Controller
             }
 
             $order->save();
+
             return response('ok', 200)->header('Content-Type', 'text/plain');
         } catch (\Throwable $th) {
             return response('Not found', 404)->header('Content-Type', 'text/plain');

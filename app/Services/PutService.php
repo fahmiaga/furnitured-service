@@ -5,14 +5,16 @@ namespace App\Services;
 use App\Models\Cart;
 use App\Models\Image;
 use App\Models\Product;
+use Symfony\Component\HttpFoundation\Response;
 
 class PutService
 {
 
-    public function __construct(Image $image, Cart $cart)
+    public function __construct(Image $image, Cart $cart, Product $product)
     {
         $this->image = $image;
         $this->cart = $cart;
+        $this->product = $product;
     }
 
     public function put($request, $product)
@@ -47,7 +49,17 @@ class PutService
         $reqs = $request->all();
 
         foreach ($reqs as $req) {
-            $this->cart->where('id', $req['cart_id'])->update(['quantity' => $req['quantity']]);
+            $cart = $this->cart->where('id', $req['cart_id'])->first();
+            $product = $this->product->where('id', $cart->product_id)->first();
+
+            if ($product->quantity < $req['quantity']) {
+                return response([
+                    'status' => Response::HTTP_BAD_REQUEST,
+                    'message' => 'cannot add item greater than quantity'
+                ], Response::HTTP_BAD_REQUEST);
+            } else {
+                $cart->update(['quantity' => $req['quantity']]);
+            }
         }
     }
 

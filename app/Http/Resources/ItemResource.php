@@ -24,6 +24,8 @@ class ItemResource extends JsonResource
             'price' => $this->product->price,
             'weight' => $this->product->weight,
             'description' => $this->product->description,
+            'shipping_cost' => $this->shipping_cost,
+            'courier' => $this->courier,
             'images' => ImageResource::collection($images->images),
         ];
     }

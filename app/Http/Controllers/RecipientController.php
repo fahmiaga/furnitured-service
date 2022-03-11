@@ -153,59 +153,70 @@ class RecipientController extends Controller
         $cart = Cart::find($request->cart_id);
 
         $origin = 457;
-        $weight =  $cart->product()->first()->weight;
+        $weight = strval($cart->product()->first()->weight * $cart->quantity);
+
+        // $weight = 8000;
+
         $destination = $recipient->city_id;
         $courier = $request->courier;
 
-        $curl = curl_init();
+        $data = [];
+        $couriers = ['jne', 'pos', 'tiki'];
 
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => "https://api.rajaongkir.com/starter/cost",
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => "",
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 30,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => "POST",
-            CURLOPT_POSTFIELDS => "origin=$origin&destination=$destination&weight=$weight&courier=$courier",
-            CURLOPT_HTTPHEADER => array(
-                "content-type: application/x-www-form-urlencoded",
-                "key: 4c6b08a7598998c44df1416b9f844953"
-            ),
-        ));
+        foreach ($couriers as $courier) {
+            $curl = curl_init();
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => "https://api.rajaongkir.com/starter/cost",
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => "",
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 30,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => "POST",
+                CURLOPT_POSTFIELDS => "origin=$origin&destination=$destination&weight=$weight&courier=$courier",
+                CURLOPT_HTTPHEADER => array(
+                    "content-type: application/x-www-form-urlencoded",
+                    "key: 4c6b08a7598998c44df1416b9f844953"
+                ),
+            ));
 
-        $response = curl_exec($curl);
-        $err = curl_error($curl);
+            $response = curl_exec($curl);
+            $err = curl_error($curl);
+            curl_close($curl);
 
-        curl_close($curl);
 
-        if ($err) {
-            echo "cURL Error #:" . $err;
-        } else {
-            $response = json_decode($response, true);
-            $data_ongkir = $response['rajaongkir']['results'];
-            Cache::put('shipping', json_encode($data_ongkir));
-            return response($data_ongkir);
-            // return json_decode($response);
+            if ($err) {
+                echo "cURL Error #:" . $err;
+            } else {
+                $response = json_decode($response, true);
+                $data_ongkir = $response['rajaongkir']['results'];
+                // return $data_ongkir;
+                array_push($data, $data_ongkir);
+                // return response($data_ongkir);
+                // return json_decode($response);
+            }
         }
+        Cache::put('shipping', json_encode($data));
+        return response($data);
     }
 
     public function checkCost(Request $request)
     {
-        $shipping_cost =  json_decode(Cache::get('shipping'), true);
-        $shipping_option = $shipping_cost[0]['costs'];
+        // $shipping_cost =  json_decode(Cache::get('shipping'), true);
+        // dd($shipping_cost);
+        // $shipping_option = $shipping_cost[0]['costs'];
 
-        $cost = null;
+        // $cost = null;
 
-        foreach ($shipping_option as $sh) {
-            if ($request->service == $sh['service']) {
-                $cost = $sh['cost'][0]['value'];
-            };
-        }
+        // foreach ($shipping_option as $sh) {
+        //     if ($request->service == $sh['service']) {
+        //         $cost = $sh['cost'][0]['value'];
+        //     };
+        // }
 
         $cart = Cart::find($request->cart_id);
 
-        $cart->update(['shipping_cost' => $cost]);
+        $cart->update(['shipping_cost' => $request->cost, 'courier' => $request->courier]);
 
         return response([
             'message' => 'success',

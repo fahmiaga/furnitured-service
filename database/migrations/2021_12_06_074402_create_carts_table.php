@@ -17,8 +17,11 @@ class CreateCartsTable extends Migration
             $table->id();
             $table->foreignId('product_id');
             $table->foreignId('user_id');
+            $table->string('transaction_id')->nullable();
             $table->bigInteger('quantity');
-            $table->string('shipping_cost')->nullable();
+            $table->string('shipping_cost')->default(0);
+            $table->string('courier')->default(0);
+            $table->softDeletes();
             $table->timestamps();
         });
     }

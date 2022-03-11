@@ -13,6 +13,11 @@ use App\Services\PutService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\Response;
+use Spatie\QueryBuilder\QueryBuilder;
+
+use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class ProductController extends Controller
 {
@@ -21,7 +26,7 @@ class ProductController extends Controller
         $this->postService = $postService;
         $this->putService = $putService;
         $this->deleteService = $deleteService;
-        $this->middleware('is_admin')->except('index', 'show', 'showProductByCategory');
+        $this->middleware('is_admin')->except('index', 'show', 'showProductByCategory', 'filterProduct');
     }
     /**
      * Display a listing of the resource.
@@ -31,11 +36,19 @@ class ProductController extends Controller
     public function index()
     {
         return response([
-            'data' => ProductResource::collection(Product::all()),
+            'data' => ProductResource::collection((Product::paginate(6))),
             'message' => 'success',
+            'totalPage' => Product::paginate(6)->lastPage(),
             'status' => Response::HTTP_OK
         ], Response::HTTP_OK);
     }
+
+    // public function paginate($items, $perPage = 6, $page = null, $options = [])
+    // {
+    //     $page = $page ?: (Paginator::resolveCurrentPage() ?: 1);
+    //     $items = $items instanceof Collection ? $items : Collection::make($items);
+    //     return new LengthAwarePaginator($items->forPage($page, $perPage), $items->count(), $perPage, $page, $options);
+    // }
 
     /**
      * Show the form for creating a new resource.
@@ -158,6 +171,26 @@ class ProductController extends Controller
             'data' => ProductResource::collection($products),
             'message' => 'success',
             'status' => Response::HTTP_OK
+        ], Response::HTTP_OK);
+    }
+
+    public function filterProduct()
+    {
+
+        $result = QueryBuilder::for(Product::class)
+            ->allowedFilters(['name', 'category_id'])
+            ->paginate(6);
+
+        $total_page = QueryBuilder::for(Product::class)
+            ->allowedFilters(['name', 'category_id'])
+            ->paginate(6)
+            ->lastPage();
+
+
+        return response([
+            'data' => ProductResource::collection(($result)),
+            'totalPage' => $total_page,
+            'message' => 'success',
         ], Response::HTTP_OK);
     }
 }

@@ -141,7 +141,13 @@ class AuthController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        //
+        // dd($request->all());
+        $user->updateUser($request);
+
+        return response()->json([
+            'message' => 'user successfully update',
+            'status' => Response::HTTP_OK
+        ], Response::HTTP_OK);
     }
 
     /**

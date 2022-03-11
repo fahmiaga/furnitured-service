@@ -6,6 +6,7 @@ use App\Services\PostService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Midtrans\CoreApi;
 use App\Http\Resources\PaymentResource;
+use App\Models\Product;
 use App\Models\Cart;
 use App\Models\Invoice;
 use App\Models\Order;
@@ -85,6 +86,23 @@ class PaymentController extends Controller
             $order->transaction_id = $charge->transaction_id;
             $order->total_cost = $total_mount;
             $order->status = "PENDING";
+
+            $carts = Cart::where('user_id', auth()->user()->id)->get();
+
+            foreach ($carts as $cart) {
+                $product = Product::where('id', $cart->product_id)->first();
+                $quantity = $product->quantity - $cart->quantity;
+
+                $product->update(['quantity' => $quantity]);
+                // dd($cart->quantity);
+            }
+
+
+            Cart::where('user_id', auth()->user()->id)->update([
+                'transaction_id' => $order->transaction_id
+            ]);
+            Cart::whereIn('user_id', [auth()->user()->id])->delete();
+
 
             if (!$order->save())
                 return false;

@@ -19,7 +19,7 @@ class CreateProductsTable extends Migration
             $table->string('name');
             $table->bigInteger('quantity');
             $table->bigInteger('price');
-            $table->decimal('weight', 7, 3);
+            $table->bigInteger('weight');
             $table->text('description');
             $table->timestamps();
         });
