@@ -164,12 +164,13 @@ class ProductController extends Controller
 
     public function showProductByCategory($category_id)
     {
-        $products = Category::find($category_id)->products;
+        $products = Product::where('category_id', $category_id)->paginate(4);
         // dd($products);
 
         return response([
             'data' => ProductResource::collection($products),
             'message' => 'success',
+            'totalPage' => $products->lastPage(),
             'status' => Response::HTTP_OK
         ], Response::HTTP_OK);
     }
