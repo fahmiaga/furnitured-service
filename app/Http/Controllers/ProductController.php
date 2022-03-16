@@ -14,10 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\Response;
 use Spatie\QueryBuilder\QueryBuilder;
-
-use Illuminate\Pagination\Paginator;
-use Illuminate\Support\Collection;
-use Illuminate\Pagination\LengthAwarePaginator;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 class ProductController extends Controller
 {
@@ -153,8 +150,9 @@ class ProductController extends Controller
     public function deleteImage($id)
     {
         $image = Image::find($id);
-        Storage::delete(substr("posts-image/$image->image_name", 12));
+        // Storage::delete(substr("posts-image/$image->image_name", 12));
         Image::destroy($image->id);
+        Cloudinary::destroy($image->image_name);
 
         return response([
             'message' => 'Image successfully deleted',

@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use App\Models\Product;
-
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -20,18 +20,20 @@ class Image extends Model
     public function addMultipleImage($images, $id)
     {
         foreach ($images as $image) {
-            $filename = $image->hashName();
-            $this->storeImage($image, $id, $filename);
+
+            $url = Cloudinary::upload($image->getRealPath(), array("folder" => "posts-image", "overwrite" => TRUE, "resource_type" => "image"))->getSecurePath();
+            $image_name = Cloudinary::getPublicId();
+            $this->storeImage($image_name, $id, $url);
         }
     }
 
     // store image
-    public function storeImage($image, $id, $filename)
+    public function storeImage($image_name, $id, $url)
     {
         return  $this->create([
             'product_id' => $id,
-            'image_name' => $image->store('post-images'),
-            'url' => "/storage/post-images/$filename" //http://127.0.0.1:8000
+            'image_name' => $image_name,
+            'url' => $url
         ]);
     }
 
