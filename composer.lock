@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1dc014f3497fbb75e0124cc9dee12f1d",
+    "content-hash": "397c77bcd6806304b21f8b2a39bae1c5",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -3173,30 +3173,24 @@
         },
         {
             "name": "spatie/laravel-query-builder",
-            "version": "3.6.1",
+            "version": "1.9.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/laravel-query-builder.git",
-                "reference": "b78b14d60271e4f3a803d0707adb73006730d781"
+                "reference": "9807600a879fbb89b56d42831ec34852a53a5c2d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/laravel-query-builder/zipball/b78b14d60271e4f3a803d0707adb73006730d781",
-                "reference": "b78b14d60271e4f3a803d0707adb73006730d781",
+                "url": "https://api.github.com/repos/spatie/laravel-query-builder/zipball/9807600a879fbb89b56d42831ec34852a53a5c2d",
+                "reference": "9807600a879fbb89b56d42831ec34852a53a5c2d",
                 "shasum": ""
             },
             "require": {
-                "illuminate/database": "^6.20.13|^7.30.4|^8.22.2",
-                "illuminate/http": "^6.20.13|^7.30.4|^8.22.2",
-                "illuminate/support": "^6.20.13|^7.30.4|^8.22.2",
-                "php": "^7.3|^8.0"
+                "php": "^7.1"
             },
             "require-dev": {
-                "ext-json": "*",
-                "laravel/legacy-factories": "^1.0.4",
-                "mockery/mockery": "^1.4",
-                "orchestra/testbench": "^4.9|^5.8|^6.3",
-                "phpunit/phpunit": "^9.0"
+                "orchestra/testbench": "~3.5.0|~3.6.0",
+                "phpunit/phpunit": "^6.1|^7.0"
             },
             "type": "library",
             "extra": {
@@ -3231,15 +3225,9 @@
             ],
             "support": {
                 "issues": "https://github.com/spatie/laravel-query-builder/issues",
-                "source": "https://github.com/spatie/laravel-query-builder"
+                "source": "https://github.com/spatie/laravel-query-builder/tree/master"
             },
-            "funding": [
-                {
-                    "url": "https://spatie.be/open-source/support-us",
-                    "type": "custom"
-                }
-            ],
-            "time": "2021-11-17T15:39:59+00:00"
+            "time": "2018-05-21T11:35:46+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",
