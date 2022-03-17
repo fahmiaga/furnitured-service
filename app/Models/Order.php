@@ -27,7 +27,7 @@ class Order extends Model
     public function getOrders()
     {
         return Cart::join('products', 'carts.product_id', '=', 'products.id')
-            ->select('*')
+            ->select('products.name', 'products.price', 'products.weight', 'carts.quantity', 'carts.shipping_cost')
             ->where('carts.user_id', auth()->user()->id)
             ->get();
     }
@@ -35,6 +35,7 @@ class Order extends Model
     public function totalCost()
     {
         $orders = $this->getOrders();
+        // dd('order =>', $orders);
         $total = 0;
         foreach ($orders as $order) {
             $total += ($order->price * $order->quantity) + $order->shipping_cost;

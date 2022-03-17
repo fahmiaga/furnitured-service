@@ -28,6 +28,7 @@ class PaymentController extends Controller
             $payment_method = $request->payment_method;
             $order_id = 'CXS' . date('YmdHis');
             $total_mount = $this->order->totalCost();
+            dd($total_mount);
 
             // return PaymentResource::collection($this->cart->getCartByUserId());
 
