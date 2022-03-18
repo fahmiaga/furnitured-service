@@ -38,6 +38,8 @@ Route::get('product/category/{id}', [ProductController::class, 'showProductByCat
 // category
 Route::get('/category', [CategoryController::class, 'index']);
 
+// notif midtrans
+Route::post('/notif/submit', [MidtransNotifController::class, 'postNotif']);
 
 Route::group(['middleware' => ['jwt.verify']], function () {
 
@@ -64,9 +66,6 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
     // payment
     Route::post('/payment/product', [PaymentController::class, 'buyProduct']);
-
-    // notif midtrans
-    Route::post('/notif/submit', [MidtransNotifController::class, 'postNotif']);
 
     // Recipient
     Route::resource('/recipient', RecipientController::class);
