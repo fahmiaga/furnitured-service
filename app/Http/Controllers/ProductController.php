@@ -13,7 +13,6 @@ use App\Services\PutService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\Response;
-use Spatie\QueryBuilder\QueryBuilder;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 class ProductController extends Controller
@@ -173,22 +172,15 @@ class ProductController extends Controller
         ], Response::HTTP_OK);
     }
 
-    public function filterProduct()
+    public function filterProduct(Request $request)
     {
 
-        $result = QueryBuilder::for(Product::class)
-            ->allowedFilters(['name', 'category_id'])
-            ->paginate(6);
 
-        $total_page = QueryBuilder::for(Product::class)
-            ->allowedFilters(['name', 'category_id'])
-            ->paginate(6)
-            ->lastPage();
-
+        $result = Product::filterProduct($request);
 
         return response([
             'data' => ProductResource::collection(($result)),
-            'totalPage' => $total_page,
+            // 'totalPage' => $total_page,
             'message' => 'success',
         ], Response::HTTP_OK);
     }

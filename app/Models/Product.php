@@ -32,4 +32,17 @@ class Product extends Model
     {
         return $this->belongsTo(Category::class, 'category_id', 'id');
     }
+
+    public static function  filterProduct($request)
+    {
+        if ($request->id === null) {
+            return Product::where('name', 'ILIKE', "%$request->name%")->get();
+        }
+        if ($request->name === null) {
+            return Product::where('category_id', $request->id)->get();
+        }
+        if ($request->name !== null && $request->id !== null) {
+            return Product::where('category_id', $request->id)->where('name', 'ILIKE', "%$request->name%")->get();
+        }
+    }
 }
