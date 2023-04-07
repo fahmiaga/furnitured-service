@@ -85,7 +85,7 @@ class AuthController extends Controller
         //Request is validated
         //Create token
         try {
-            if (!$token = JWTAuth::attempt($credentials, ['exp' => Carbon::now()->addDays(7)->timestamp])) {
+            if (!$token = JWTAuth::attempt($credentials, ['exp' => Carbon::now()->addYear()->timestamp])) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Login credentials are invalid.',
